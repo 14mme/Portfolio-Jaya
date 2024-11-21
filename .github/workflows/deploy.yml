@@ -14,25 +14,19 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Setup Node.js (untuk memastikan environment sesuai)
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
+      # Step 2: Check for package.json
+      - name: Check for package.json
+        id: check_package
+        run: |
+          if [ -f "package.json" ]; then
+            echo "exists=true" >> $GITHUB_ENV
+          else
+            echo "exists=false" >> $GITHUB_ENV
+          fi
 
-      # Step 3: Install dependencies (jika ada package.json, misalnya untuk bundler)
-      - name: Install Dependencies
-        run: npm install
-        if: fileExists('package.json')
-
-      # Step 4: Build project (opsional, untuk framework seperti React atau bundler)
-      - name: Build Project
-        run: npm run build
-        if: fileExists('package.json')
-
-      # Step 5: Deploy ke GitHub Pages
+      # Step 3: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
+          publish_dir: ./  # Ganti jika ada folder build (contoh: ./build)
